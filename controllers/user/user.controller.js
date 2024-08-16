@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
-const { generateAccesToken, generateRefreshToken } = require('./token.controller');
+const { generateAccesToken, generateRefreshToken } = require('../token/token.controller');
 const { validationResult } = require('express-validator');
+const { addUser } = require('./lib/user.query');
 
 let users = [
     {
@@ -41,18 +42,18 @@ const registerUser = async (req,res,next) => {
         if (users.find((user) => user.username === req.body['username'])) {
             throw Error("Username already exist.");
         } else {
-            users.push({
-                id: users.length + 1,
+            addUser({
                 name: req.body['name'],
                 username: req.body['username'],
                 password: hashedPassword
             })
             res.json({success: true});
-            // TODO: Push user ke database
         }
     } catch (err) {
         next(err);
     }
 }
+
+
 
 module.exports = { registerUser, loginUser, logoutUser }

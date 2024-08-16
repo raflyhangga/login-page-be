@@ -1,0 +1,13 @@
+services:
+  database:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: p@55word
+      POSTGRES_USER: admingemink
+      POSTGRES_DB: logindb
+    ports:
+      - '5432:5432'
+  app:
+    image: login-project-app
+    depends_on:
+      - database

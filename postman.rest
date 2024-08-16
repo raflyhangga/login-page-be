@@ -1,8 +1,17 @@
-POST http://localhost:4000/user/register
+POST http://localhost:13000/database/init
+Content-Type: application/json
+
+###
+
+GET http://localhost:13000/user/getUsers
+
+###
+
+POST http://localhost:13000/user/register
 Content-Type: application/json
 
 {
-    "username": 123353242,
-    "name": "Anies Baswedan",
-    "password": "skibidididi"
+    "name": "rafly",
+    "username": "rhangga",
+    "password": "password"
 }

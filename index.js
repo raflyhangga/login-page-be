@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 
 const PORT = 4000;
@@ -8,6 +9,7 @@ const authRouter = require('./routes/token.router');
 const initRouter = require('./routes/db.router');
 
 app.use(express.json());
+app.use(cors());
 app.use('/user',userRouter);
 app.use('/token',authRouter);
 app.use('/database', initRouter)

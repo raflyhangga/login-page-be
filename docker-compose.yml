@@ -11,3 +11,5 @@ services:
     image: login-project-app
     depends_on:
       - database
+    ports:
+      - '13000:4000'

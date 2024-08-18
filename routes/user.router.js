@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const { checkSchema } = require('express-validator');
 const { registerUser, loginUser, logoutUser } = require('../controllers/user/user.controller')
 const { userDataSchema } = require('../validation/user.validation');
 const { getUsers } = require('../controllers/user/lib/user.query');

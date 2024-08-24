@@ -1,31 +1,56 @@
 const bcrypt = require('bcrypt');
 const { generateAccesToken, generateRefreshToken } = require('../token/token.controller');
 const { validationResult } = require('express-validator');
-const { addUser } = require('./lib/user.query');
+const { addUser, getUser } = require('./lib/user.query');
+const { addRefreshToken,removeRefreshToken } = require('../token/lib/token.query');
 
-let users = [
-    {
-        id: 1,
-        name: "James Bush",
-        username: "jbush",
-        password: "$2b$10$FLOaLPNpIAqPr4vN2aohUOs21cw27mVebpyTkbfkteJMxe3LMQcSe"
+const logout = (req,res) => {
+    const authHeader = req.headers['authorization'];
+    console.log(authHeader)
+    const token = authHeader && authHeader.split(' ')[1];
+
+    // If there is no token, return 401
+    if(!token) return res.sendStatus(401);
+    try {
+        removeRefreshToken(token);
+        res.sendStatus(204);
+    } catch(err){
+        console.log(err);
     }
-];
-
-const logoutUser = (req,res,next) => {
-    // TODO: Apus refreshTokens-nya dari databse
-    res.sendStatus(204);
 }
 
-const loginUser = (req,res,next) => {
+const login = async (req,res,next) => {
     const username = req.body.username;
-    const profile = {username};
+    const password = req.body.password;
+    
+    try {
+        const data = await getUser(username);
+        if (data.length === 0) {
+            return res.status(404).json({
+                success: false,
+                errors: "Invalid username or password"
+            })
+        }
+        const suspectedUser = data[0];
+        console.log("Suspected user:");
+        console.log(suspectedUser);
+        const isPasswordMatch = await bcrypt.compare(password, suspectedUser.password);
+        if (!isPasswordMatch) {
+            return res.status(404).json({
+                success: false,
+                errors: "Invalid username or password"
+            })
+        }
+        const accessToken = generateAccesToken({userID: suspectedUser.id});
+        const refreshToken = generateRefreshToken({userID: suspectedUser.id});
+        
+        addRefreshToken(refreshToken);
+    
+        res.json({accessToken,refreshToken});
+    } catch (err){
+        next(err);
+    }
 
-    const accessToken = generateAccesToken(profile);
-    const refreshToken = generateRefreshToken(profile);
-    // TODO: Push refreshToken-nya ke databse
-
-    res.json({accessToken,refreshToken});
 }
 
 const registerUser = async (req,res,next) => {
@@ -39,8 +64,11 @@ const registerUser = async (req,res,next) => {
         }
 
         const hashedPassword = await bcrypt.hash(req.body['password'],10);
-        if (users.find((user) => user.username === req.body['username'])) {
-            throw Error("Username already exist.");
+        if ((await getUser(req.body['username'])).length > 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Username already exists."
+            });
         } else {
             addUser({
                 name: req.body['name'],
@@ -56,4 +84,4 @@ const registerUser = async (req,res,next) => {
 
 
 
-module.exports = { registerUser, loginUser, logoutUser }
+module.exports = { registerUser, login, logout }

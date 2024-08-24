@@ -3,7 +3,17 @@ Content-Type: application/json
 
 ###
 
+GET http://localhost:13000/token/tokens
+
+###
+
+GET http://localhost:13000/user/session/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsImlhdCI6MTcyNDEzMzcyNSwiZXhwIjoxNzI0MTM1NTI1fQ.m3Z6g182sX-_6lTw61Tlg5Lxg5mkOY-3xgU29RgeyGc
+
+###
+
 GET http://localhost:13000/user/getUsers
+
 
 ###
 
@@ -11,8 +21,8 @@ POST http://localhost:13000/user/register
 Content-Type: application/json
 
 {
-    "name": "rafly",
-    "username": "rhangga",
+    "name": "Cucung Sukardi",
+    "username": "csukar",
     "password": "password"
 }
 
@@ -25,3 +35,8 @@ Content-Type: application/json
     "username": "rhangga",
     "password": "password"
 }
+
+###
+
+DELETE  http://localhost:13000/user/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsImlhdCI6MTcyNDEzNTE3MiwiZXhwIjoxNzI0MTM4NzcyfQ.l__q3rVS71kdcKQt-c0yhyBcJe9iTg6wh8UhYVCP0AE

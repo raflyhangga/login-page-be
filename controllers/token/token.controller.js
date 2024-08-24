@@ -1,7 +1,6 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken')
 
-let refreshTokens = [];
 
 function retrievePayload(req,res,next){
     // Middleware for checking the validity of the token.
@@ -14,9 +13,11 @@ function retrievePayload(req,res,next){
     if(!token) return res.sendStatus(401);
 
     // Checking validity of the token
-    jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,user) => {
+    jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,payload) => {
         if(err) return res.sendStatus(403);
-        req.user = user;
+        console.log('Payload:');
+        console.log(payload);
+        req.payload = payload;
         next();
     });
 }
@@ -39,7 +40,7 @@ function generateAccesToken(payload){
 }
 
 function generateRefreshToken(payload){
-    return jwt.sign(payload,process.env.REFRESH_TOKEN_SECRET);
+    return jwt.sign(payload,process.env.REFRESH_TOKEN_SECRET,{expiresIn: '60m'});
 }
 
 module.exports = { generateAccesToken, newAccesToken, retrievePayload, generateRefreshToken };

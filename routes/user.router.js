@@ -18,7 +18,6 @@ router.get('/getUsers', async (req,res,next) => {
 })
 router.get('/session/profile', retrievePayload, async (req,res) => {
     try {
-        console.log(req.payload.userID);
         const data = await getSessionProfile(req.payload.userID);
         res.json({
             id: data[0].id,

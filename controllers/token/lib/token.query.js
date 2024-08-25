@@ -19,4 +19,12 @@ const getAllRefreshToken = async () => {
     return resp.rows;
 }
 
-module.exports = { addRefreshToken,removeRefreshToken,getAllRefreshToken }
+const isRefreshTokenExists = async (refreshToken) => {
+    const query = 'SELECT EXISTS(SELECT 1 FROM refresh_token WHERE refreshToken = $1)'
+    const values = [refreshToken]
+    const result = await pool.query(query,values);
+
+    return result.rows[0].exists;
+}
+
+module.exports = { addRefreshToken,removeRefreshToken,getAllRefreshToken, isRefreshTokenExists }

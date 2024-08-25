@@ -6,7 +6,6 @@ const { addRefreshToken,removeRefreshToken } = require('../token/lib/token.query
 
 const logout = (req,res) => {
     const authHeader = req.headers['authorization'];
-    console.log(authHeader)
     const token = authHeader && authHeader.split(' ')[1];
 
     // If there is no token, return 401
@@ -32,8 +31,6 @@ const login = async (req,res,next) => {
             })
         }
         const suspectedUser = data[0];
-        console.log("Suspected user:");
-        console.log(suspectedUser);
         const isPasswordMatch = await bcrypt.compare(password, suspectedUser.password);
         if (!isPasswordMatch) {
             return res.status(404).json({
